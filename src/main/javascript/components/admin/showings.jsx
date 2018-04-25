@@ -173,7 +173,7 @@ export default class Showings extends React.Component {
                 required="true"
               />
 
-              <label htmlFor="showing-form-time-field">Time (HH:mm)</label>
+              <label htmlFor="showing-form-time-field">Time</label>
               <input
                 id="showing-form-time-field"
                 type="time"
@@ -181,6 +181,7 @@ export default class Showings extends React.Component {
                 name="time"
                 onChange={this.onChange}
                 required="true"
+                step="60"
               />
 
               <button
