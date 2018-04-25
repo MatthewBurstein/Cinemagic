@@ -39,8 +39,9 @@ public class ShowingsPage extends AbstractNavigablePage {
     @SuppressWarnings("ConstantConditions")
     public void createShowing(String filmName, String date, String time) {
         new Select(driver.findElement(By.id("showing-form-film-field"))).selectByVisibleText(filmName);
-        driver.findElement(By.id("showing-form-date-field")).sendKeys(date);
         driver.findElement(By.id("showing-form-time-field")).sendKeys(time);
+
+        driver.findElement(By.id("showing-form-date-field")).sendKeys(date);
         driver.findElement(By.id("showing-form-time-field")).submit();
 //        driver.findElement(By.id("showing-form-submit-button")).click();
 
