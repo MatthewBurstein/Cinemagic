@@ -41,6 +41,7 @@ public class ShowingsPage extends AbstractNavigablePage {
         new Select(driver.findElement(By.id("showing-form-film-field"))).selectByVisibleText(filmName);
         driver.findElement(By.id("showing-form-date-field")).sendKeys(date);
         driver.findElement(By.id("showing-form-time-field")).sendKeys(time);
+        driver.findElement(By.id("showing-form-time-field")).sendKeys(Keys.TAB);
         driver.findElement(By.id("showing-form-submit-button")).click();
 
         WebElement showing = support
