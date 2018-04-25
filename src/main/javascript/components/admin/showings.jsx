@@ -173,17 +173,10 @@ export default class Showings extends React.Component {
                 required="true"
               />
 
-              {
-                /**
-                  * TODO This should be a time field, but I've had real issues testing it with
-                  * Selenium
-                  */
-              }
-
               <label htmlFor="showing-form-time-field">Time (HH:mm)</label>
               <input
                 id="showing-form-time-field"
-                type="text"
+                type="time"
                 value={this.state.time}
                 name="time"
                 onChange={this.onChange}
