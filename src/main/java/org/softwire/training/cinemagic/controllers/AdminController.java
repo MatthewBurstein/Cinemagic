@@ -30,7 +30,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
-@Secured("ROLE_ADMIN")
+@Secured("mvn compile spring-boot:run '-Dspring.profiles.active=development'")
 public class AdminController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
