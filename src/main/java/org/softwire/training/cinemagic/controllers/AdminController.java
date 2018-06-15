@@ -40,7 +40,7 @@ public class AdminController {
     private final ShowingService showingService;
     private final ScreenService screenService;
 
-    @Autowired
+        @Autowired
     public AdminController(CinemaService cinemaService,
                            FilmService filmService,
                            ShowingService showingService,
