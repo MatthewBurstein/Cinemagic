@@ -13,7 +13,12 @@ import java.util.List;
 @Transactional
 public class CinemaService {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
+
+    @Autowired
+    public CinemaService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     public List<Cinema> list() {
         return entityManager

@@ -21,7 +21,13 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class BookingService {
-    private EntityManager entityManager;
+
+    private final EntityManager entityManager;
+
+    @Autowired
+    public BookingService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     public List<Booking> listBookings(Integer showingId) {
         return entityManager

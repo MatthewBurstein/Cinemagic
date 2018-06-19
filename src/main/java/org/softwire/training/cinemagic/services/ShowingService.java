@@ -15,6 +15,11 @@ public class ShowingService {
 
     private EntityManager entityManager;
 
+    @Autowired
+    public ShowingService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     public List<Showing> listCinemaShowings(Integer cinemaID) {
         return entityManager
                 .createQuery("SELECT s FROM Showing AS s WHERE s.screen.cinema.id = :id ORDER BY s.time", Showing.class)

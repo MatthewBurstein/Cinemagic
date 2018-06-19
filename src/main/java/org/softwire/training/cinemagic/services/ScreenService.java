@@ -14,6 +14,11 @@ public class ScreenService {
 
     private EntityManager entityManager;
 
+    @Autowired
+    public ScreenService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     public Screen create(Screen screen) {
         entityManager.persist(screen);
         entityManager.refresh(screen);

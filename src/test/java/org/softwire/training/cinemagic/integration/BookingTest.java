@@ -70,7 +70,6 @@ public class BookingTest {
         String chooseCinemaMessage = driver
                 .findElement(By.className("cinema-select"))
                 .getText();
-        System.out.println(chooseCinemaMessage);
         assertThat("remains on cinema selection screen", chooseCinemaMessage.contains("Choose a Cinema"));
 
     }
