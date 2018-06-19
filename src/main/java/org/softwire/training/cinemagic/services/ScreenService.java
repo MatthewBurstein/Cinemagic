@@ -6,16 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Service
 @Transactional
 public class ScreenService {
-    private final EntityManager entityManager;
 
-    @Autowired
-    public ScreenService(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     public Screen create(Screen screen) {
         entityManager.persist(screen);

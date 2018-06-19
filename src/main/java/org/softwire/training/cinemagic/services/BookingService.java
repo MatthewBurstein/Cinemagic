@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,13 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class BookingService {
-
-    private final EntityManager entityManager;
-
-    @Autowired
-    public BookingService(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     public List<Booking> listBookings(Integer showingId) {
         return entityManager

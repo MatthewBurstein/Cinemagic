@@ -50,4 +50,9 @@ public class Film {
     public void setLengthMinutes(Integer lengthMinutes) {
         this.lengthMinutes = lengthMinutes;
     }
+
+    public String toString() {
+        return name + " " + lengthMinutes;
+    }
+
 }

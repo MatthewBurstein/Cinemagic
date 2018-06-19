@@ -6,18 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
 @Transactional
 public class CinemaService {
 
-    private final EntityManager entityManager;
-
-    @Autowired
-    public CinemaService(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     public List<Cinema> list() {
         return entityManager
