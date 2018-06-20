@@ -17,6 +17,11 @@ public class WebInteractor {
         findById(id).sendKeys(text);
     }
 
+    public void fillFieldByClass(String className, CharSequence text) {
+        findByClassName(className).clear();
+        findByClassName(className).sendKeys(text);
+    }
+
     public void clickById(String id) {
         findById(id).click();
     }
@@ -31,15 +36,15 @@ public class WebInteractor {
         return driver.findElement(By.className(className));
     }
 
+    public WebElement findByXpath(String xpath) {
+        return driver.findElement(By.xpath(xpath));
+    }
+
     public WebElement findByTagName(String tagName) {
         return driver.findElement(By.tagName(tagName));
     }
 
     private WebElement findById(String id) {
         return driver.findElement(By.id(id));
-    }
-
-    private WebElement findByXpath(String xpath) {
-        return driver.findElement(By.xpath(xpath));
     }
 }

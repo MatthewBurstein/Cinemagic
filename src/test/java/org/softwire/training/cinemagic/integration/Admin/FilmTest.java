@@ -57,9 +57,9 @@ public class FilmTest {
         webInteractor.clickById("films-form-submit-button");
         waitManager.shortWait();
         WebElement nameElement = waitManager.waitForXpath(filmDetailsXPath("Another Test Film"));
-        String filmTable = webInteractor.findByTagName("table").getText();
         WebElement rowElement = nameElement.findElement(By.xpath("./.."));
         WebElement lengthMinutesElement = rowElement.findElement(By.className("films-details-length-minutes"));
+        String filmTable = webInteractor.findByTagName("table").getText();
         assertThat(lengthMinutesElement.getText(), Matchers.equalTo("120"));
         assertThat("film is added correctly", filmTable.contains("Another Test Film"));
     }

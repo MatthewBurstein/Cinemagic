@@ -5,9 +5,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.softwire.training.cinemagic.integration.helpers.WaitManager;
 import org.softwire.training.cinemagic.integration.helpers.WebInteractor;
+import org.softwire.training.cinemagic.models.Cinema;
+import org.softwire.training.cinemagic.services.CinemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +37,9 @@ public class ScreenTest {
     @Autowired
     protected WebDriver driver;
 
+    @Autowired
+    public CinemaService cinemaService;
+
     private WebInteractor webInteractor;
     private WaitManager waitManager;
     private LoginManager loginManager;
@@ -54,23 +60,45 @@ public class ScreenTest {
 
     @Test
     public void createNewScreen() {
+        String testScreenName = "Test Screen";
+        String testScreenRows = "8";
+        String testScreenRowsWidth = "7";
         loginManager.adminLogin();
         webInteractor.clickById("admin-link-cinemas");
-        System.out.println(webInteractor.findByTagName("body").getText());
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        System.out.println("====AFTER====");
-        System.out.println(webInteractor.findByTagName("body").getText());
-        waitManager.waitForId("screen-form-name-field");
-        webInteractor.fillFieldById("screen-form-name-field", "Screen 2");
-        webInteractor.fillFieldById("screen-form-rows-field", "8");
-        webInteractor.fillFieldById("screen-form-row-width-field", "7");
+        waitManager.waitForClass("screen-form-name-field");
+        completeNewScreenForm(testScreenName, testScreenRows, testScreenRowsWidth);
+        WebElement screenNameElement = findScreenName(testScreenName);
+        WebElement screenRowsElement = findScreenRows(testScreenRows);
+        WebElement screenRowsWidthElement = findScreenRowsWidth(testScreenRowsWidth);
+        assertThat(screenNameElement.getText(), equalTo(testScreenName));
+        assertThat(screenRowsElement.getText(), equalTo(testScreenRows));
+        assertThat(screenRowsWidthElement.getText(), equalTo(testScreenRowsWidth));
     }
 
-    private void selectCinemaAndContinue(String cinemaName) {
-        new Select(driver.findElement(By.tagName("select"))).selectByVisibleText(cinemaName);
-        driver.findElement(By.xpath("//button[@type='submit']")).click();
+    private void completeNewScreenForm(String testScreenName, String testScreenRows, String testScreenRowsWidth) {
+        webInteractor.fillFieldByClass("screen-form-name-field", testScreenName);
+        webInteractor.fillFieldByClass("screen-form-rows-field", testScreenRows);
+        webInteractor.fillFieldByClass("screen-form-row-width-field", testScreenRowsWidth);
+        webInteractor.clickByClass("screen-form-submit-button");
+    }
+
+    private WebElement findScreenName(String screenName) {
+        WebElement screenNameElement = waitManager.waitForXpath("//td[@class=\"screen-detail-name\"][text()=\"" + screenName + "\"]");
+        return screenNameElement;
+    }
+
+    private WebElement findScreenRows(String screenRows) {
+        WebElement screenRowsElement = waitManager.waitForXpath("//td[@class=\"screen-detail-rows\"][text()=\"" + screenRows + "\"]");
+        return screenRowsElement;
+    }
+
+    private WebElement findScreenRowsWidth(String screenRowsWidth) {
+        WebElement screenRowsWidthElement = waitManager.waitForXpath("//td[@class=\"screen-detail-row-width\"][text()=\"" + screenRowsWidth+ "\"]");
+        return screenRowsWidthElement;
+    }
+
+    private WebElement findCinemaDiv(String cinemaName) {
+        WebElement cinemaNameElement = waitManager.waitForXpath("//h3[@class=\"cinema-details-name\"][text()=\"" + cinemaName + "\"]");
+        return cinemaNameElement.findElement(By.xpath("./.."));
     }
 }

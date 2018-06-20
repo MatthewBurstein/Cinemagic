@@ -58,17 +58,6 @@ public class CinemaTest {
         waitManager.waitForId("cinemas-form-submit-button");
         webInteractor.fillFieldById("cinemas-form-name-field", testCinemaName);
         webInteractor.clickById("cinemas-form-submit-button");
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
-        waitManager.shortWait();
         webInteractor.findByClassName("cinema-details-name");
         WebElement cinemaNameElement = waitManager.waitForXpath(cinemaDetailsXPath(testCinemaName));
         assertThat(cinemaNameElement.getText(), equalTo(testCinemaName));
@@ -78,5 +67,4 @@ public class CinemaTest {
     private String cinemaDetailsXPath(String cinemaName) {
         return "//h3[@class=\"cinema-details-name\"][text()=\"" + cinemaName + "\"]";
     }
-
 }
