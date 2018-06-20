@@ -52,10 +52,11 @@ public class CinemaTest {
 
     @Test
     public void createNewCinema() {
+        String testCinemaName = "Another Test Cinema";
         loginManager.adminLogin();
         webInteractor.clickById("admin-link-cinemas");
         waitManager.waitForId("cinemas-form-submit-button");
-        webInteractor.fillFieldById("cinemas-form-name-field", "testCinema");
+        webInteractor.fillFieldById("cinemas-form-name-field", testCinemaName);
         webInteractor.clickById("cinemas-form-submit-button");
         waitManager.shortWait();
         waitManager.shortWait();
@@ -68,9 +69,9 @@ public class CinemaTest {
         waitManager.shortWait();
         waitManager.shortWait();
         waitManager.shortWait();
-//        WebElement cinemaNameElement = webInteractor.findByClassName("cinema-details-name");
-        WebElement cinemaNameElement = waitManager.waitForXpath(cinemaDetailsXPath("testCinema"));
-        assertThat(cinemaNameElement.getText(), equalTo("Another Test Cinema"));
+        webInteractor.findByClassName("cinema-details-name");
+        WebElement cinemaNameElement = waitManager.waitForXpath(cinemaDetailsXPath(testCinemaName));
+        assertThat(cinemaNameElement.getText(), equalTo(testCinemaName));
         // Is there a better assertion to use here? If the element does not exist the test will fail while waiting in cinemaNameElement before the assertion runs.
     }
 
