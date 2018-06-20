@@ -1,15 +1,13 @@
 package org.softwire.training.cinemagic.integration.Admin;
 
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 import org.softwire.training.cinemagic.integration.helpers.WaitManager;
 import org.softwire.training.cinemagic.integration.helpers.WebInteractor;
-import org.softwire.training.cinemagic.services.FilmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -27,44 +26,51 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SqlGroup({
         @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "../CreateTestData.sql")
 })
-public class FilmTest {
+public class ScreenTest {
+
     @LocalServerPort
     protected Integer port;
 
     @Autowired
     protected WebDriver driver;
 
-    @Autowired
-    FilmService filmService;
-
     private WebInteractor webInteractor;
     private WaitManager waitManager;
-    private LoginManager logInManager;
+    private LoginManager loginManager;
+
 
     @Before
     public void createHelpers() {
         webInteractor = new WebInteractor(driver);
         waitManager = new WaitManager(driver);
-        logInManager = new LoginManager(driver, port);
+        loginManager = new LoginManager(driver, port);
     }
 
     @Test
-    public void createNewFilm() {
-        logInManager.adminLogin();
-        waitManager.waitForId("films-form-name-field");
-        webInteractor.fillFieldById("films-form-name-field", "Another Test Film");
-        webInteractor.fillFieldById("films-form-length-minutes-field", "120");
-        webInteractor.clickById("films-form-submit-button");
-        waitManager.shortWait();
-        WebElement nameElement = waitManager.waitForXpath(filmDetailsXPath("Another Test Film"));
-        String filmTable = webInteractor.findByTagName("table").getText();
-        WebElement rowElement = nameElement.findElement(By.xpath("./.."));
-        WebElement lengthMinutesElement = rowElement.findElement(By.className("films-details-length-minutes"));
-        assertThat(lengthMinutesElement.getText(), Matchers.equalTo("120"));
-        assertThat("film is added correctly", filmTable.contains("Another Test Film"));
+    public void testTitle() {
+        loginManager.adminLogin();
+        assertThat("Cinemagic", equalTo(driver.getTitle()));
     }
 
-    private String filmDetailsXPath(String filmName) {
-        return "//td[@class=\"films-details-name\"][text()=\"" + filmName + "\"]";
+    @Test
+    public void createNewScreen() {
+        loginManager.adminLogin();
+        webInteractor.clickById("admin-link-cinemas");
+        System.out.println(webInteractor.findByTagName("body").getText());
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        System.out.println("====AFTER====");
+        System.out.println(webInteractor.findByTagName("body").getText());
+        waitManager.waitForId("screen-form-name-field");
+        webInteractor.fillFieldById("screen-form-name-field", "Screen 2");
+        webInteractor.fillFieldById("screen-form-rows-field", "8");
+        webInteractor.fillFieldById("screen-form-row-width-field", "7");
+    }
+
+    private void selectCinemaAndContinue(String cinemaName) {
+        new Select(driver.findElement(By.tagName("select"))).selectByVisibleText(cinemaName);
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
     }
 }

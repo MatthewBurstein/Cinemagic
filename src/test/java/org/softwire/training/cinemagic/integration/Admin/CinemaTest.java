@@ -1,13 +1,12 @@
 package org.softwire.training.cinemagic.integration.Admin;
 
-import com.google.common.base.Function;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.softwire.training.cinemagic.integration.helpers.WaitManager;
+import org.softwire.training.cinemagic.integration.helpers.WebInteractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,54 +27,55 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 })
 public class CinemaTest {
 
-  @LocalServerPort
+    @LocalServerPort
     protected Integer port;
 
     @Autowired
     protected WebDriver driver;
 
+    private WebInteractor webInteractor;
+    private WaitManager waitManager;
+    private LoginManager loginManager;
+
+    @Before
+    public void createHelpers() {
+        webInteractor = new WebInteractor(driver);
+        waitManager = new WaitManager(driver);
+        loginManager = new LoginManager(driver, port);
+    }
+
     @Test
     public void testTitle() {
-        navigateToAdminLogin();
+        loginManager.adminLogin();
         assertThat("Cinemagic", equalTo(driver.getTitle()));
     }
 
     @Test
     public void createNewCinema() {
-        logIn();
-        driver.findElement(By.id("admin-link-cinemas")).click();
-        waitForElement(By.id("cinemas-form-submit-button"));
-        driver.findElement(By.id("cinemas-form-name-field")).sendKeys("Another Test Cinema");
-        driver.findElement(By.id("cinemas-form-submit-button")).click();
-        WebElement cinemaNameElement = shortWait().until((Function<? super WebDriver, WebElement>) webDriver ->
-                webDriver.findElement(cinemaDetailsXPath("Another Test Cinema")));
+        loginManager.adminLogin();
+        webInteractor.clickById("admin-link-cinemas");
+        waitManager.waitForId("cinemas-form-submit-button");
+        webInteractor.fillFieldById("cinemas-form-name-field", "testCinema");
+        webInteractor.clickById("cinemas-form-submit-button");
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+        waitManager.shortWait();
+//        WebElement cinemaNameElement = webInteractor.findByClassName("cinema-details-name");
+        WebElement cinemaNameElement = waitManager.waitForXpath(cinemaDetailsXPath("testCinema"));
         assertThat(cinemaNameElement.getText(), equalTo("Another Test Cinema"));
         // Is there a better assertion to use here? If the element does not exist the test will fail while waiting in cinemaNameElement before the assertion runs.
     }
 
-    private void logIn() {
-        navigateToAdminLogin();
-        driver.findElement(By.id("login-form-username-field")).sendKeys("admin");
-        driver.findElement(By.id("login-form-password-field")).sendKeys("admin");
-        driver.findElement(By.id("login-form-submit-button")).click();
-    }
-
-
-    private void navigateToAdminLogin() {
-        driver.get("http://localhost:" + port + "/admin");
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private WebElement waitForElement(By locator) {
-        return shortWait().until((Function<? super WebDriver, WebElement>) webDriver -> webDriver.findElement(locator));
-    }
-
-    private WebDriverWait shortWait() {
-        return new WebDriverWait(driver, 10, 100);
-    }
-
-    private By cinemaDetailsXPath(String filmName) {
-        return By.xpath("//h3[@class=\"cinema-details-name\"][text()=\"" + filmName + "\"]");
+    private String cinemaDetailsXPath(String cinemaName) {
+        return "//h3[@class=\"cinema-details-name\"][text()=\"" + cinemaName + "\"]";
     }
 
 }

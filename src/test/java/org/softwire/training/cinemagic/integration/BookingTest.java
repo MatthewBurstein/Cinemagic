@@ -1,6 +1,7 @@
 package org.softwire.training.cinemagic.integration;
 
 import com.google.common.base.Function;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +10,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.softwire.training.cinemagic.integration.Admin.LoginManager;
+import org.softwire.training.cinemagic.integration.helpers.WaitManager;
+import org.softwire.training.cinemagic.integration.helpers.WebInteractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,39 +41,49 @@ public class BookingTest {
     @Autowired
     protected WebDriver driver;
 
+    private WebInteractor webInteractor;
+    private WaitManager waitManager;
+    private LoginManager loginManager;
+
+    @Before
+    public void createInteractor() {
+        this.webInteractor = new WebInteractor(driver);
+        this.waitManager = new WaitManager(driver);
+        this.loginManager = new LoginManager(driver, port);
+    }
+
     @Test
     public void testTitle() {
-        navigateToBookingPage();
+        loginManager.userLogin();
         assertThat("Cinemagic", equalTo(driver.getTitle()));
     }
 
     @Test
     public void testMainlineBookingFlow() {
         String cinemaName = "Test Cinema";
-        navigateToBookingPage();
-        waitForElement(By.className("cinema-select"));
+        loginManager.userLogin();
+
+        waitManager.waitForClass("cinema-select");
 
         selectCinemaAndContinue(cinemaName);
-        waitForElement(By.className("film-time-select"));
+        waitManager.waitForClass("film-time-select");
 
-        driver.findElement(By.className("film-selection-button")).click();
-        waitForElement(By.className("seat-select"));
+        webInteractor.clickByClass("film-selection-button");
+        waitManager.waitForClass("seat-select");
 
         selectSeatAndContinue();
-        waitForElement(By.className("booking-success"));
+        waitManager.waitForClass("booking-success");
 
-        WebElement element = driver.findElement(By.className("booking-success"));
+        WebElement element = webInteractor.findByClassName("booking-success");
         assertThat("Confirms booking", element.getText().contains("Booking Successful!"));
     }
 
     @Test
     public void testWhenNoCinemaChosen_RemainsOnCinemaSelection() {
-        navigateToBookingPage();
-        waitForElement(By.className("cinema-select"));
-        driver.findElement(By.xpath("//button[@type='submit']")).click();
-        String chooseCinemaMessage = driver
-                .findElement(By.className("cinema-select"))
-                .getText();
+        loginManager.userLogin();
+        waitManager.waitForClass("cinema-select");
+        webInteractor.clickByXpath("//button[@type='submit']");
+        String chooseCinemaMessage = webInteractor.findByClassName("cinema-select").getText();
         assertThat("remains on cinema selection screen", chooseCinemaMessage.contains("Choose a Cinema"));
 
     }
@@ -77,42 +91,28 @@ public class BookingTest {
     @Test
     public void testWhenNoSeatsSelected_DisplaysErrorMessage() {
         String cinemaName = "Test Cinema";
-        navigateToBookingPage();
-        waitForElement(By.className("cinema-select"));
+        loginManager.userLogin();
+        waitManager.waitForClass("cinema-select");
 
         selectCinemaAndContinue(cinemaName);
-        waitForElement(By.className("film-time-select"));
+        waitManager.waitForClass("film-time-select");
 
-        driver.findElement(By.className("film-selection-button")).click();
-        waitForElement(By.className("seat-select"));
+        webInteractor.clickByClass("film-selection-button");
+        waitManager.waitForClass("seat-select");
 
-        driver.findElement(By.id("seat-select-book-button")).click();
-        String errorMessage = driver.findElement(By.className("errorMessage")).getText();
+        webInteractor.clickById("seat-select-book-button");
+        String errorMessage = webInteractor.findByClassName("errorMessage").getText();
         String expectedMessage = "You must select at least one seat";
         assertThat("displays error when no seat selected", errorMessage.contains(expectedMessage));
-
-    }
-
-    private void navigateToBookingPage() {
-        driver.get("http://localhost:" + port + "/booking");
     }
 
     private void selectCinemaAndContinue(String cinemaName) {
         new Select(driver.findElement(By.tagName("select"))).selectByVisibleText(cinemaName);
-        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        webInteractor.clickByXpath("//button[@type='submit']");
     }
 
     private void selectSeatAndContinue() {
-        driver.findElement(By.xpath("//button[text()='U']")).click();
-        driver.findElement(By.id("seat-select-book-button")).click();
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private WebElement waitForElement(By locator) {
-        return shortWait().until((Function<? super WebDriver, WebElement>) webDriver -> webDriver.findElement(locator));
-    }
-
-    private WebDriverWait shortWait() {
-        return new WebDriverWait(driver, 10, 100);
+        webInteractor.clickByXpath("//button[text()='U']");
+        webInteractor.clickById("seat-select-book-button");
     }
 }
